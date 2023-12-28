@@ -1,49 +1,31 @@
 
+import LoginPage from '../pages/loginPage'
 import userData from '../fixtures/userdata.json'
+import DashboardPage from '../pages/dashboardPage'
+import MenuPage from '../pages/menuPage'
+import MyinfoPage from '../pages/myinfoPage'
+
+const loginPage = new LoginPage()
+const dashboardPage = new DashboardPage()
+const menuPage = new MenuPage()
+const myinfoPage = new MyinfoPage()
+
 
 describe('Orange HRM Tests', () => {
 
-  const selectorsList = {
-    usernameField: "[name='username']",
-    passwordField: "[name='password']",
-    loginButton: "[type='submit']",
-    sectionTitleTopBar: ".oxd-topbar-header-breadcrumb > .oxd-text",
-    dashboardGrid: ".orangehrm-dashboard-grid",
-    wrongCredentialAlert: "[role='alert']",
-    myInfoButton: '[href="/web/index.php/pim/viewMyDetails"]',
-    firstNameField: "[name='firstName']",
-    middleNameField: "[name='middleName']",
-    lastNameField: "[name='lastName']",
-    genericField: ".oxd-input--active",
-    dateField: "[placeholder='yyyy-mm-dd']",
-    dateCloseButton: ".--close",
-    submitButton: "[type='submit']",
-
-  }
-
   it.only('User Info Update - Success', () => {
 
-    cy.visit('/auth/login')
-    cy.get(selectorsList.usernameField).type(userData.userSuccess.username)
-    cy.get(selectorsList.passwordField).type(userData.userSuccess.password)
-    cy.get(selectorsList.loginButton).click()
-    cy.location('pathname').should('equal', '/web/index.php/dashboard/index')
-    cy.get(selectorsList.dashboardGrid)
-    cy.get(selectorsList.myInfoButton).click()
-    cy.get(selectorsList.firstNameField).clear().type('Alexander')
-    cy.get(selectorsList.middleNameField).clear().type('Taylor')
-    cy.get(selectorsList.lastNameField).clear().type('Smith')
-    cy.get(selectorsList.genericField).eq(3).clear().type('Alegator')
-    cy.get(selectorsList.genericField).eq(4).clear().type('Employee59')
-    cy.get(selectorsList.genericField).eq(5).clear().type('OtherId66687952')
-    cy.get(selectorsList.genericField).eq(6).clear().type('DriverId98784295')
-    cy.get(selectorsList.genericField).eq(7).clear().type('2023-04-26')
-    cy.get(selectorsList.dateCloseButton).click()
-    cy.get(selectorsList.genericField).eq(8).clear().type('ssnNumber59822564')
-    cy.get(selectorsList.genericField).eq(9).clear().type('sinNumber59822564')
-    cy.get(selectorsList.submitButton).eq(0).click()
-    cy.get('body').should('contain', 'Successfully Updated')
-    cy.get('.oxd-toast-close')
+    loginPage.accessLoginPage()
+    loginPage.loginWithUser(userData.userSuccess.username, userData.userSuccess.password)
+
+    dashboardPage.checkDashboardPage()
+
+    menuPage.accessMyInfo()
+
+    myinfoPage.fillPersonalDetails('Taylor', 'Moon', 'Smith', 'Alegator')
+    myinfoPage.fillEmployeeDetails('EmployeeID', 'OtherID', '06265875', '2023-10-06', '9587465', '77778594')
+    myinfoPage.fillStatusDetails('2000-04-26', 1)
+    myinfoPage.saveForm()
 
   })
 
